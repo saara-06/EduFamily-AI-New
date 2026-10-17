@@ -4,15 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduFamily AI</title>
+<title>EduFamily AI | Your Future Companion</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#080a18;color:#f4f2ff;font-family:Arial,sans-serif}
-header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #242344}
+header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #242344;gap:12px;flex-wrap:wrap}
 .logo{font-size:23px;font-weight:bold;color:#b99aff}
 .logo span{color:#53e7ff}
 .pill{border:1px solid #6650a9;border-radius:20px;padding:8px 13px;color:#cdbbff;font-size:12px}
-main{max-width:1100px;margin:auto;padding:45px 22px}
+main{max-width:1100px;margin:auto;padding:35px 22px}
 .hero{padding:35px 0}
 .eyebrow{color:#57e5f5;letter-spacing:3px;font-size:12px}
 h1{font-size:clamp(38px,7vw,68px);line-height:1.08;margin:18px 0}
@@ -24,17 +24,32 @@ p{color:#aaaecb;line-height:1.7}
 .emoji{font-size:29px}
 h2{font-size:18px;margin:17px 0 8px}
 button{background:linear-gradient(90deg,#895bfa,#5369ef);border:0;border-radius:10px;color:white;padding:12px 16px;cursor:pointer;font-weight:bold}
+button:hover{filter:brightness(1.15)}
 input,textarea,select{width:100%;padding:12px;margin:8px 0;background:#090b1b;color:white;border:1px solid #343252;border-radius:9px}
 .panel{margin-top:28px;padding:23px;border:1px solid #343052;background:#111329;border-radius:18px}
 #result{white-space:pre-wrap;color:#d8d2ff;line-height:1.8}
 footer{text-align:center;color:#777b9a;padding:35px}
+#hira-toggle{position:fixed;right:20px;bottom:20px;z-index:9999;border-radius:28px;box-shadow:0 0 22px #895bfa66}
+#hira-window{display:none;position:fixed;right:20px;bottom:85px;width:min(350px,calc(100vw - 30px));height:440px;z-index:9999;background:#101126;border:1px solid #8e6dff;border-radius:18px;overflow:hidden;box-shadow:0 0 30px #895bfa55}
+.chat-head{background:linear-gradient(110deg,#5424a8,#087e9b);padding:15px;display:flex;justify-content:space-between;align-items:center}
+.chat-head button{padding:5px 10px;background:#ffffff22}
+#hira-messages{height:315px;overflow-y:auto;padding:12px}
+.msg{padding:10px 12px;border-radius:12px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5}
+.bot{background:#252545;margin-right:20px}
+.user{background:#293b56;margin-left:20px}
+.chat-form{display:flex;gap:6px;padding:8px;border-top:1px solid #343252}
+.chat-form input{flex:1;min-width:0;margin:0}
+.chat-form button{padding:10px}
+@media(max-width:480px){main{padding:22px 15px}.hero{padding:20px 0}.panel{padding:16px}header{padding:18px 15px}}
 </style>
 </head>
 <body>
+
 <header>
   <div class="logo">EduFamily<span> AI</span></div>
   <div class="pill">✦ YOUR AI COMPANION</div>
 </header>
+
 <main>
   <section class="hero">
     <div class="eyebrow">INTELLIGENCE FOR YOUR FUTURE</div>
@@ -45,22 +60,29 @@ footer{text-align:center;color:#777b9a;padding:35px}
 
   <div class="grid">
     <section class="card">
-      <div class="emoji">✧</div><h2>AI Study Planner</h2>
+      <div class="emoji">✧</div>
+      <h2>AI Study Planner</h2>
       <p>Create a simple plan for your study goals.</p>
       <button onclick="showTool('study')">Open planner</button>
     </section>
+
     <section class="card">
-      <div class="emoji">⌘</div><h2>Career Navigator</h2>
+      <div class="emoji">⌘</div>
+      <h2>Career Navigator</h2>
       <p>Explore career paths based on your interests.</p>
       <button onclick="showTool('career')">Explore careers</button>
     </section>
+
     <section class="card">
-      <div class="emoji">◈</div><h2>Family Budget</h2>
+      <div class="emoji">◈</div>
+      <h2>Family Budget</h2>
       <p>Calculate your monthly savings and expenses.</p>
       <button onclick="showTool('budget')">Plan budget</button>
     </section>
+
     <section class="card">
-      <div class="emoji">♡</div><h2>Family Goals</h2>
+      <div class="emoji">♡</div>
+      <h2>Family Goals</h2>
       <p>Write down goals and keep track of progress.</p>
       <button onclick="showTool('goals')">Set a goal</button>
     </section>
@@ -74,6 +96,7 @@ footer{text-align:center;color:#777b9a;padding:35px}
     <button id="run" onclick="runTool()">Generate result</button>
     <p id="result"></p>
   </section>
+
   <section class="panel">
     <h2>✧ Your personal notes</h2>
     <textarea id="notes" rows="3" placeholder="Write your ideas, plans or reminders..."></textarea>
@@ -81,53 +104,207 @@ footer{text-align:center;color:#777b9a;padding:35px}
     <p id="noteStatus"></p>
   </section>
 </main>
+
 <footer>EduFamily AI · Learn smarter. Plan better. Grow together.</footer>
+
+<!-- HIRA CHAT ASSISTANT -->
+<button id="hira-toggle" onclick="toggleHira()">✨ Chat with Hira</button>
+
+<div id="hira-window">
+  <div class="chat-head">
+    <div>
+      <strong>✨ Hira AI</strong><br>
+      <small>Your study & career buddy</small>
+    </div>
+    <button onclick="toggleHira()" aria-label="Close chat">✕</button>
+  </div>
+
+  <div id="hira-messages" aria-live="polite">
+    <div class="msg bot">Heyyy! 💜 I'm Hira, your EduFamily companion. Ask me about studying, Python, careers or internships!</div>
+  </div>
+
+  <form class="chat-form" onsubmit="sendHira(event)">
+    <input id="hira-input" type="text" placeholder="Ask Hira something..." autocomplete="off" required>
+    <button type="submit">Send</button>
+  </form>
+</div>
+
 <script>
-let current='study';
-const configs={
-study:{title:'✧ AI Study Planner',desc:'Enter your subject and available study time.',fields:[['Subject','subject','e.g. Python'],['Available minutes','minutes','60']]},
-career:{title:'⌘ Career Navigator',desc:'Explore a path that matches your interests.',fields:[['Your interests','interests','e.g. coding, design, AI'],['Your current level','level','e.g. beginner']]},
-budget:{title:'◈ Family Budget Planner',desc:'Enter monthly income and expenses.',fields:[['Monthly income (₹)','income','25000'],['Monthly expenses (₹)','expenses','18000']]},
-goals:{title:'♡ Family Goals',desc:'Turn one goal into small, actionable steps.',fields:[['Your goal','goal','e.g. save for education'],['Target date','date','e.g. December']]}
+let current = 'study';
+
+const configs = {
+  study: {
+    title:'✧ AI Study Planner',
+    desc:'Enter your subject and available study time.',
+    fields:[['Subject','subject','e.g. Python'],['Available minutes','minutes','60']]
+  },
+  career: {
+    title:'⌘ Career Navigator',
+    desc:'Explore a path that matches your interests.',
+    fields:[['Your interests','interests','e.g. coding, design, AI'],['Your current level','level','e.g. beginner']]
+  },
+  budget: {
+    title:'◈ Family Budget Planner',
+    desc:'Enter monthly income and expenses.',
+    fields:[['Monthly income (₹)','income','25000'],['Monthly expenses (₹)','expenses','18000']]
+  },
+  goals: {
+    title:'♡ Family Goals',
+    desc:'Turn one goal into small, actionable steps.',
+    fields:[['Your goal','goal','e.g. save for education'],['Target date','date','e.g. December']]
+  }
 };
-function showTool(type){
-current=type;
-const c=configs[type];
-document.getElementById('toolTitle').textContent=c.title;
-document.getElementById('toolDescription').textContent=c.desc;
-document.getElementById('fields').innerHTML=c.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" placeholder="${f[2]}" /></label>`).join('');
-document.getElementById('result').textContent='';
-document.getElementById('assistant').scrollIntoView({behavior:'smooth'});
+
+function showTool(type) {
+  current = type;
+  const c = configs[type];
+
+  document.getElementById('toolTitle').textContent = c.title;
+  document.getElementById('toolDescription').textContent = c.desc;
+
+  document.getElementById('fields').innerHTML = c.fields.map(f =>
+    `<label>${f[0]}<input id="${f[1]}" placeholder="${f[2]}"></label>`
+  ).join('');
+
+  document.getElementById('result').textContent = '';
+  document.getElementById('assistant').scrollIntoView({behavior:'smooth'});
 }
-function runTool(){
-const val=id=>document.getElementById(id)?.value.trim()||'';
-let answer='';
-if(current==='study'){
-let s=val('subject'),m=Number(val('minutes'));
-if(!s||!m||m<1){answer='Please enter a subject and a valid number of minutes.'}
-else{let a=Math.floor(m*.6),b=Math.floor(m*.3),c=m-a-b;answer=`Your ${s} study plan (${m} minutes)\n\n1. Learn concepts — ${a} minutes\n2. Practice questions — ${b} minutes\n3. Quick revision — ${c} minutes\n\nTip: Take a short break after your session.`}
+
+function runTool() {
+  const val = id => document.getElementById(id)?.value.trim() || '';
+  let answer = '';
+
+  if (current === 'study') {
+    const s = val('subject');
+    const m = Number(val('minutes'));
+
+    if (!s || !m || m < 1 || !Number.isFinite(m)) {
+      answer = 'Please enter a subject and valid study minutes.';
+    } else {
+      const a = Math.floor(m * 0.6);
+      const b = Math.floor(m * 0.3);
+      const c = m - a - b;
+      answer = `Your ${s} study plan (${m} minutes)\n\n1. Learn concepts — ${a} minutes\n2. Practice questions — ${b} minutes\n3. Quick revision — ${c} minutes\n\nTip: Take a short break after your session.`;
+    }
+  }
+
+  if (current === 'career') {
+    const i = val('interests');
+    const l = val('level');
+
+    answer = !i ? 'Please enter your interests.' :
+      `Career exploration for: ${i}\nCurrent level: ${l || 'Not specified'}\n\nPossible paths:\n• Software development\n• Data analytics and AI\n• UI/UX design\n\nNext step: Build a beginner project in the area you like.`;
+  }
+
+  if (current === 'budget') {
+    const incomeText = val('income');
+    const expenseText = val('expenses');
+    const income = Number(incomeText);
+    const expense = Number(expenseText);
+
+    answer = incomeText === '' || expenseText === '' ||
+      !Number.isFinite(income) || !Number.isFinite(expense) ||
+      income < 0 || expense < 0
+      ? 'Please enter valid non-negative amounts.'
+      : `Monthly budget summary\n\nIncome: ₹${income.toLocaleString('en-IN')}\nExpenses: ₹${expense.toLocaleString('en-IN')}\n${income >= expense ? 'Remaining savings' : 'Amount over budget'}: ₹${Math.abs(income - expense).toLocaleString('en-IN')}`;
+  }
+
+  if (current === 'goals') {
+    const g = val('goal');
+    const d = val('date');
+
+    answer = !g ? 'Please write your goal.' :
+      `Your goal: ${g}\nTarget date: ${d || 'Not set'}\n\nYour action plan:\n1. Break the goal into three small tasks.\n2. Complete the first task this week.\n3. Review your progress every Sunday.\n4. Adjust your plan when needed.`;
+  }
+
+  document.getElementById('result').textContent = answer;
 }
-if(current==='career'){
-let i=val('interests'),l=val('level');
-answer=!i?'Please enter your interests.':`Career exploration for: ${i}\nCurrent level: ${l||'Not specified'}\n\nPossible paths to explore:\n• Software development\n• Data analytics and AI\n• UI/UX design\n\nNext step: Try a beginner project in the area that interests you most. These are general suggestions, not an AI-generated assessment.`;
+
+function saveNotes() {
+  try {
+    localStorage.setItem('eduFamilyNotes', document.getElementById('notes').value);
+    document.getElementById('noteStatus').textContent = 'Notes saved in this browser ✓';
+  } catch (error) {
+    document.getElementById('noteStatus').textContent = 'Could not save notes in this browser.';
+  }
 }
-if(current==='budget'){
-let income=Number(val('income')),expense=Number(val('expenses'));
-answer=val('income')===''||val('expenses')===''||income<0||expense<0?'Please enter valid non-negative amounts.':`Monthly budget summary\n\nIncome: ₹${income.toLocaleString('en-IN')}\nExpenses: ₹${expense.toLocaleString('en-IN')}\n${income>=expense?'Remaining savings':'Amount over budget'}: ₹${Math.abs(income-expense).toLocaleString('en-IN')}`;
+
+try {
+  document.getElementById('notes').value = localStorage.getItem('eduFamilyNotes') || '';
+} catch (error) {
+  document.getElementById('noteStatus').textContent = 'Browser storage is unavailable.';
 }
-if(current==='goals'){
-let g=val('goal'),d=val('date');
-answer=!g?'Please write your goal.':`Your goal: ${g}\nTarget date: ${d||'Not set'}\n\nYour action plan:\n1. Break the goal into three small tasks.\n2. Complete the first task this week.\n3. Review your progress every Sunday.\n4. Adjust the plan when needed.`;
+
+function toggleHira() {
+  const chat = document.getElementById('hira-window');
+  const isOpen = chat.style.display === 'block';
+  chat.style.display = isOpen ? 'none' : 'block';
+
+  if (!isOpen) {
+    document.getElementById('hira-input').focus();
+  }
 }
-document.getElementById('result').textContent=answer;
+
+function addMessage(text, who) {
+  const messages = document.getElementById('hira-messages');
+  const bubble = document.createElement('div');
+
+  bubble.className = 'msg ' + who;
+  bubble.textContent = text;
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
 }
-function saveNotes(){
-localStorage.setItem('eduFamilyNotes',document.getElementById('notes').value);
-document.getElementById('noteStatus').textContent='Notes saved in this browser ✓';
+
+function getHiraReply(question) {
+  const q = question.toLowerCase();
+
+  if (/\b(hi|hello|hey|salaam|assalamualaikum)\b/.test(q)) {
+    return 'Heyyy! 💜 Hira is here! What shall we learn today?';
+  }
+
+  if (q.includes('python') || q.includes('coding') || q.includes('program')) {
+    return '💻 Coding mission: Start with one small problem, understand the logic, then write the code. Tell me your exact topic and I will help you step by step.';
+  }
+
+  if (q.includes('study') || q.includes('exam') || q.includes('timetable')) {
+    return '📚 Let’s make studying easier! Pick one topic, study for 25 minutes, practise questions for 10 minutes, and revise for 5 minutes. Which subject is your priority?';
+  }
+
+  if (q.includes('career') || q.includes('job') || q.includes('internship')) {
+    return '🚀 Start with programming basics, DSA practice, one useful project, and a GitHub portfolio. Choose a career area you enjoy and build your skills consistently.';
+  }
+
+  if (q.includes('motivation') || q.includes('tired') || q.includes('lazy')) {
+    return '💜 You do not have to do everything today. Choose one tiny task and work on it for just 10 minutes. Small progress still counts!';
+  }
+
+  if (q.includes('budget') || q.includes('saving') || q.includes('money')) {
+    return '💰 Track your monthly income, essential expenses, and savings. You can also open the Family Budget card to calculate the difference.';
+  }
+
+  if (q.includes('goal') || q.includes('plan')) {
+    return '✨ Turn your goal into three small tasks. Pick the easiest one, set a deadline, and review your progress at the end of the week.';
+  }
+
+  return '💜 I can help with study planning, Python basics, careers, internships, goals and budgeting. Tell me a little more about what you need!';
 }
-document.getElementById('notes').value=localStorage.getItem('eduFamilyNotes')||'';
+
+function sendHira(event) {
+  event.preventDefault();
+
+  const input = document.getElementById('hira-input');
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  addMessage(question, 'user');
+  input.value = '';
+
+  const reply = getHiraReply(question);
+  addMessage(reply, 'bot');
+}
+
 showTool('study');
 </script>
 </body>
 </html>
-
