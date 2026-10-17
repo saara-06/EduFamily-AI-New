@@ -1,1 +1,133 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduFamily AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080a18;color:#f4f2ff;font-family:Arial,sans-serif}
+header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #242344}
+.logo{font-size:23px;font-weight:bold;color:#b99aff}
+.logo span{color:#53e7ff}
+.pill{border:1px solid #6650a9;border-radius:20px;padding:8px 13px;color:#cdbbff;font-size:12px}
+main{max-width:1100px;margin:auto;padding:45px 22px}
+.hero{padding:35px 0}
+.eyebrow{color:#57e5f5;letter-spacing:3px;font-size:12px}
+h1{font-size:clamp(38px,7vw,68px);line-height:1.08;margin:18px 0}
+h1 span{background:linear-gradient(90deg,#b89aff,#57e5f5);color:transparent;background-clip:text}
+p{color:#aaaecb;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px;margin-top:30px}
+.card{background:linear-gradient(145deg,#15172d,#0e1021);border:1px solid #292849;border-radius:18px;padding:23px;transition:.2s}
+.card:hover{border-color:#8e6dff;transform:translateY(-3px)}
+.emoji{font-size:29px}
+h2{font-size:18px;margin:17px 0 8px}
+button{background:linear-gradient(90deg,#895bfa,#5369ef);border:0;border-radius:10px;color:white;padding:12px 16px;cursor:pointer;font-weight:bold}
+input,textarea,select{width:100%;padding:12px;margin:8px 0;background:#090b1b;color:white;border:1px solid #343252;border-radius:9px}
+.panel{margin-top:28px;padding:23px;border:1px solid #343052;background:#111329;border-radius:18px}
+#result{white-space:pre-wrap;color:#d8d2ff;line-height:1.8}
+footer{text-align:center;color:#777b9a;padding:35px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">EduFamily<span> AI</span></div>
+  <div class="pill">✦ YOUR AI COMPANION</div>
+</header>
+<main>
+  <section class="hero">
+    <div class="eyebrow">INTELLIGENCE FOR YOUR FUTURE</div>
+    <h1>Your future.<br><span>Your family's strength.</span></h1>
+    <p>One smart space for learning, career planning and family finances.</p>
+    <button onclick="document.getElementById('assistant').scrollIntoView({behavior:'smooth'})">Explore your AI space ↘</button>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="emoji">✧</div><h2>AI Study Planner</h2>
+      <p>Create a simple plan for your study goals.</p>
+      <button onclick="showTool('study')">Open planner</button>
+    </section>
+    <section class="card">
+      <div class="emoji">⌘</div><h2>Career Navigator</h2>
+      <p>Explore career paths based on your interests.</p>
+      <button onclick="showTool('career')">Explore careers</button>
+    </section>
+    <section class="card">
+      <div class="emoji">◈</div><h2>Family Budget</h2>
+      <p>Calculate your monthly savings and expenses.</p>
+      <button onclick="showTool('budget')">Plan budget</button>
+    </section>
+    <section class="card">
+      <div class="emoji">♡</div><h2>Family Goals</h2>
+      <p>Write down goals and keep track of progress.</p>
+      <button onclick="showTool('goals')">Set a goal</button>
+    </section>
+  </div>
+
+  <section class="panel" id="assistant">
+    <div class="eyebrow">EDUFAMILY WORKSPACE</div>
+    <h2 id="toolTitle">✦ What shall we work on today?</h2>
+    <p id="toolDescription">Choose a feature above to get started.</p>
+    <div id="fields"></div>
+    <button id="run" onclick="runTool()">Generate result</button>
+    <p id="result"></p>
+  </section>
+  <section class="panel">
+    <h2>✧ Your personal notes</h2>
+    <textarea id="notes" rows="3" placeholder="Write your ideas, plans or reminders..."></textarea>
+    <button onclick="saveNotes()">Save notes</button>
+    <p id="noteStatus"></p>
+  </section>
+</main>
+<footer>EduFamily AI · Learn smarter. Plan better. Grow together.</footer>
+<script>
+let current='study';
+const configs={
+study:{title:'✧ AI Study Planner',desc:'Enter your subject and available study time.',fields:[['Subject','subject','e.g. Python'],['Available minutes','minutes','60']]},
+career:{title:'⌘ Career Navigator',desc:'Explore a path that matches your interests.',fields:[['Your interests','interests','e.g. coding, design, AI'],['Your current level','level','e.g. beginner']]},
+budget:{title:'◈ Family Budget Planner',desc:'Enter monthly income and expenses.',fields:[['Monthly income (₹)','income','25000'],['Monthly expenses (₹)','expenses','18000']]},
+goals:{title:'♡ Family Goals',desc:'Turn one goal into small, actionable steps.',fields:[['Your goal','goal','e.g. save for education'],['Target date','date','e.g. December']]}
+};
+function showTool(type){
+current=type;
+const c=configs[type];
+document.getElementById('toolTitle').textContent=c.title;
+document.getElementById('toolDescription').textContent=c.desc;
+document.getElementById('fields').innerHTML=c.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" placeholder="${f[2]}" /></label>`).join('');
+document.getElementById('result').textContent='';
+document.getElementById('assistant').scrollIntoView({behavior:'smooth'});
+}
+function runTool(){
+const val=id=>document.getElementById(id)?.value.trim()||'';
+let answer='';
+if(current==='study'){
+let s=val('subject'),m=Number(val('minutes'));
+if(!s||!m||m<1){answer='Please enter a subject and a valid number of minutes.'}
+else{let a=Math.floor(m*.6),b=Math.floor(m*.3),c=m-a-b;answer=`Your ${s} study plan (${m} minutes)\n\n1. Learn concepts — ${a} minutes\n2. Practice questions — ${b} minutes\n3. Quick revision — ${c} minutes\n\nTip: Take a short break after your session.`}
+}
+if(current==='career'){
+let i=val('interests'),l=val('level');
+answer=!i?'Please enter your interests.':`Career exploration for: ${i}\nCurrent level: ${l||'Not specified'}\n\nPossible paths to explore:\n• Software development\n• Data analytics and AI\n• UI/UX design\n\nNext step: Try a beginner project in the area that interests you most. These are general suggestions, not an AI-generated assessment.`;
+}
+if(current==='budget'){
+let income=Number(val('income')),expense=Number(val('expenses'));
+answer=val('income')===''||val('expenses')===''||income<0||expense<0?'Please enter valid non-negative amounts.':`Monthly budget summary\n\nIncome: ₹${income.toLocaleString('en-IN')}\nExpenses: ₹${expense.toLocaleString('en-IN')}\n${income>=expense?'Remaining savings':'Amount over budget'}: ₹${Math.abs(income-expense).toLocaleString('en-IN')}`;
+}
+if(current==='goals'){
+let g=val('goal'),d=val('date');
+answer=!g?'Please write your goal.':`Your goal: ${g}\nTarget date: ${d||'Not set'}\n\nYour action plan:\n1. Break the goal into three small tasks.\n2. Complete the first task this week.\n3. Review your progress every Sunday.\n4. Adjust the plan when needed.`;
+}
+document.getElementById('result').textContent=answer;
+}
+function saveNotes(){
+localStorage.setItem('eduFamilyNotes',document.getElementById('notes').value);
+document.getElementById('noteStatus').textContent='Notes saved in this browser ✓';
+}
+document.getElementById('notes').value=localStorage.getItem('eduFamilyNotes')||'';
+showTool('study');
+</script>
+</body>
+</html>
+
