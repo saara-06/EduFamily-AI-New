@@ -3,298 +3,793 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduFamily AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#7562e8">
+<title>Hira AI | Study & Career Buddy</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#080a18;color:#f4f2ff;font-family:Arial,sans-serif}
-header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #242344}
-.logo{font-size:23px;font-weight:bold;color:#b99aff}
-.logo span{color:#53e7ff}
-.pill{border:1px solid #6650a9;border-radius:20px;padding:8px 13px;color:#cdbbff;font-size:12px}
-main{max-width:1100px;margin:auto;padding:45px 22px}
-.hero{padding:35px 0}
-.eyebrow{color:#57e5f5;letter-spacing:3px;font-size:12px}
-h1{font-size:clamp(38px,7vw,68px);line-height:1.08;margin:18px 0}
-h1 span{background:linear-gradient(90deg,#b89aff,#57e5f5);color:transparent;background-clip:text}
-p{color:#aaaecb;line-height:1.7}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px;margin-top:30px}
-.card{background:linear-gradient(145deg,#15172d,#0e1021);border:1px solid #292849;border-radius:18px;padding:23px;transition:.2s}
-.card:hover{border-color:#8e6dff;transform:translateY(-3px)}
-.emoji{font-size:29px}
-h2{font-size:18px;margin:17px 0 8px}
-button{background:linear-gradient(90deg,#895bfa,#5369ef);border:0;border-radius:10px;color:white;padding:12px 16px;cursor:pointer;font-weight:bold}
-button:disabled{opacity:.6;cursor:wait}
-input,textarea,select{width:100%;padding:12px;margin:8px 0;background:#090b1b;color:white;border:1px solid #343252;border-radius:9px}
-.panel{margin-top:28px;padding:23px;border:1px solid #343052;background:#111329;border-radius:18px}
-#result{white-space:pre-wrap;color:#d8d2ff;line-height:1.8}
-footer{text-align:center;color:#777b9a;padding:35px}
-#hira-toggle{position:fixed;right:20px;bottom:20px;z-index:1000;border-radius:25px;box-shadow:0 0 22px #895bfa66}
-#hira-window{display:none;position:fixed;right:15px;bottom:82px;width:min(360px,calc(100vw - 30px));height:450px;z-index:1000;background:#101126;border:1px solid #8e6dff;border-radius:18px;overflow:hidden;box-shadow:0 0 30px #895bfa55}
-.chat-head{background:linear-gradient(110deg,#5424a8,#087e9b);padding:14px;display:flex;justify-content:space-between;align-items:center}
-.chat-head button{padding:5px 10px;background:#ffffff22}
-#hira-messages{height:320px;overflow-y:auto;padding:12px}
-.msg{padding:10px 12px;border-radius:12px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5}
-.bot{background:#252545;margin-right:18px}
-.user{background:#293b56;margin-left:18px}
-.chat-form{display:flex;gap:6px;padding:8px;border-top:1px solid #343252}
-.chat-form input{flex:1;min-width:0;margin:0}
-.chat-form button{padding:10px}
-@media(max-width:480px){main{padding:22px 15px}.hero{padding:20px 0}header{padding:18px 15px}.panel{padding:16px}}
+:root {
+  --bg:#f5f3ff;
+  --panel:#ffffff;
+  --text:#292541;
+  --muted:#77728e;
+  --accent:#7562e8;
+  --soft:#eeeaff;
+  --border:#e6e1f4;
+}
+[data-theme="dark"] {
+  --bg:#151322;
+  --panel:#211e32;
+  --text:#f6f3ff;
+  --muted:#b5aecb;
+  --accent:#a394ff;
+  --soft:#393153;
+  --border:#3b354f;
+}
+* { box-sizing:border-box }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.55 system-ui,Arial,sans-serif;
+}
+button,input,textarea,select { font:inherit }
+button { cursor:pointer }
+.layout {
+  display:grid;
+  grid-template-columns:245px 1fr;
+  min-height:100vh;
+  max-width:1500px;
+  margin:auto;
+}
+aside {
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin-bottom:8px;
+}
+.logo {
+  background:linear-gradient(135deg,#7562e8,#bd8df5);
+  color:white;
+  border-radius:14px;
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  font-size:23px;font-weight:900;
+}
+.brand h2 { font-size:19px;margin:0 }
+.brand small { color:var(--muted) }
+.btn {
+  border:0;
+  border-radius:11px;
+  background:var(--accent);
+  color:white;
+  padding:11px 13px;
+  font-weight:700;
+}
+.btn.secondary {
+  background:var(--soft);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+.nav { display:grid;gap:5px }
+.nav button,.history button {
+  text-align:left;
+  padding:10px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:var(--text);
+}
+.nav button:hover,.nav button.active,.history button:hover {
+  background:var(--soft);
+}
+.label {
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-top:10px;
+}
+.history { display:grid;gap:3px;max-height:35vh;overflow:auto }
+.history button {
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:13px;
+}
+.side-bottom { margin-top:auto;display:grid;gap:8px }
+main { min-width:0;display:flex;flex-direction:column;min-height:100vh }
+header {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 22px;background:var(--panel);
+  border-bottom:1px solid var(--border);
+}
+header strong { font-size:16px }
+.muted { color:var(--muted);font-size:12px }
+.header-actions { display:flex;gap:7px }
+.icon {
+  width:40px;height:40px;border:1px solid var(--border);
+  background:var(--panel);color:var(--text);border-radius:11px;
+}
+.content {
+  width:100%;max-width:950px;margin:auto;
+  padding:25px 20px;flex:1;
+}
+.welcome { text-align:center;padding:30px 0 25px }
+.welcome .emoji { font-size:44px }
+.welcome h1 { font-size:clamp(27px,4vw,40px);margin:8px 0 }
+.welcome p { color:var(--muted);max-width:560px;margin:auto }
+.gradient {
+  background:linear-gradient(90deg,#7562e8,#bd78d8);
+  color:transparent;background-clip:text;
+}
+.quick-grid {
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;margin:22px 0;
+}
+.quick {
+  background:var(--panel);color:var(--text);
+  border:1px solid var(--border);border-radius:14px;
+  text-align:left;padding:15px;
+}
+.quick b { display:block;margin-bottom:5px }
+.quick small { color:var(--muted) }
+.messages { display:grid;gap:16px;padding-bottom:20px }
+.message { display:flex;gap:10px;align-items:flex-start }
+.message.user { flex-direction:row-reverse }
+.avatar {
+  width:35px;height:35px;flex:0 0 35px;
+  display:grid;place-items:center;border-radius:12px;
+  background:linear-gradient(135deg,#7562e8,#bd8df5);
+  color:white;font-weight:900;
+}
+.message.user .avatar { background:var(--soft);color:var(--accent) }
+.bubble {
+  max-width:calc(100% - 45px);
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:4px 15px 15px 15px;
+  padding:12px 15px;overflow-wrap:anywhere;
+}
+.message.user .bubble {
+  background:var(--soft);border-radius:15px 4px 15px 15px;
+}
+.bubble p { margin:0 0 8px }
+.bubble p:last-child { margin-bottom:0 }
+.bubble pre {
+  white-space:pre-wrap;overflow:auto;background:var(--bg);
+  padding:10px;border-radius:9px;
+}
+.bubble code { font-family:Consolas,monospace }
+.copy {
+  border:0;background:transparent;color:var(--muted);
+  font-size:11px;padding:5px 0 0;
+}
+.composer {
+  position:sticky;bottom:0;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:17px;padding:10px;
+  box-shadow:0 8px 30px #22175512;
+}
+textarea {
+  width:100%;min-height:55px;max-height:180px;resize:vertical;
+  border:0;outline:0;background:transparent;color:var(--text);
+  padding:8px;
+}
+.composer-bottom {
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.tools { display:flex;flex-wrap:wrap;gap:5px }
+.tools button {
+  border:1px solid var(--border);background:var(--bg);
+  color:var(--muted);border-radius:8px;padding:7px;font-size:11px;
+}
+.send {
+  border:0;background:var(--accent);color:white;
+  width:42px;height:42px;border-radius:12px;
+}
+.note { text-align:center;color:var(--muted);font-size:11px;padding:9px }
+.panel {
+  display:none;background:var(--panel);
+  border:1px solid var(--border);border-radius:15px;padding:18px;
+}
+.panel.show { display:block }
+.panel h2 { margin-top:0 }
+.field { display:grid;gap:6px;margin:12px 0 }
+.field label { color:var(--muted);font-size:12px;font-weight:700 }
+.field input,.field select {
+  width:100%;padding:11px;border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--bg);color:var(--text);
+}
+.task {
+  display:flex;gap:8px;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.task span { flex:1 }
+.task.done span { text-decoration:line-through;color:var(--muted) }
+.delete-task { border:0;background:transparent;color:var(--muted) }
+.toast {
+  position:fixed;bottom:18px;left:50%;
+  transform:translateX(-50%);padding:10px 15px;
+  background:var(--text);color:var(--panel);
+  border-radius:10px;display:none;
+}
+.toast.show { display:block }
+@media(max-width:760px) {
+  .layout { grid-template-columns:1fr }
+  aside { padding:10px;border-right:0;border-bottom:1px solid var(--border) }
+  .brand { margin-bottom:0 }
+  .nav { grid-template-columns:repeat(4,1fr) }
+  .nav button { text-align:center;padding:8px 3px;font-size:12px }
+  .nav button span { display:none }
+  .label,.history,.side-bottom { display:none }
+  header { padding:12px }
+  .content { padding:15px 10px }
+  .quick-grid { grid-template-columns:1fr }
+  .welcome { padding:15px 0 }
+}
 </style>
 </head>
+
 <body>
-<header>
-  <div class="logo">EduFamily<span> AI</span></div>
-  <div class="pill">✦ YOUR AI COMPANION</div>
-</header>
+<div class="layout">
+<aside>
+  <div class="brand">
+    <div class="logo">H</div>
+    <div><h2>Hira AI</h2><small>Your study buddy ✨</small></div>
+  </div>
+
+  <button class="btn" id="newChat">＋ New chat</button>
+
+  <div class="label">Workspace</div>
+  <nav class="nav">
+    <button class="active" data-view="chat">💬 <span>Chat</span></button>
+    <button data-view="study">📚 <span>Study</span></button>
+    <button data-view="quiz">🧠 <span>Quiz</span></button>
+    <button data-view="career">🚀 <span>Career</span></button>
+  </nav>
+
+  <div class="label">Recent chats</div>
+  <div class="history" id="historyList"></div>
+
+  <div class="side-bottom">
+    <button class="btn secondary" id="exportChat">⬇ Export chat</button>
+    <button class="btn secondary" id="clearChat">🗑 Clear chat</button>
+  </div>
+</aside>
 
 <main>
-  <section class="hero">
-    <div class="eyebrow">INTELLIGENCE FOR YOUR FUTURE</div>
-    <h1>Your future.<br><span>Your family's strength.</span></h1>
-    <p>One smart space for learning, career planning and family finances.</p>
-    <button onclick="document.getElementById('assistant').scrollIntoView({behavior:'smooth'})">Explore your AI space ↘</button>
-  </section>
+<header>
+  <div>
+    <strong id="pageTitle">Hira AI Chat</strong>
+    <div class="muted" id="status">Ready to help ✨</div>
+  </div>
+  <div class="header-actions">
+    <button class="icon" id="themeBtn" title="Toggle theme">☾</button>
+    <button class="icon" id="settingsBtn" title="Settings">⚙</button>
+  </div>
+</header>
 
-  <div class="grid">
-    <section class="card">
-      <div class="emoji">✧</div><h2>AI Study Planner</h2>
-      <p>Create a simple plan for your study goals.</p>
-      <button onclick="showTool('study')">Open planner</button>
-    </section>
-    <section class="card">
-      <div class="emoji">⌘</div><h2>Career Navigator</h2>
-      <p>Explore career paths based on your interests.</p>
-      <button onclick="showTool('career')">Explore careers</button>
-    </section>
-    <section class="card">
-      <div class="emoji">◈</div><h2>Family Budget</h2>
-      <p>Calculate monthly savings and expenses.</p>
-      <button onclick="showTool('budget')">Plan budget</button>
-    </section>
-    <section class="card">
-      <div class="emoji">♡</div><h2>Family Goals</h2>
-      <p>Write down goals and track progress.</p>
-      <button onclick="showTool('goals')">Set a goal</button>
-    </section>
+<div class="content">
+<section id="chatView">
+  <div class="welcome" id="welcome">
+    <div class="emoji">🌙✨</div>
+    <h1>Hey Saara, welcome to <span class="gradient">Hira AI</span></h1>
+    <p>Your AI buddy for coding, studying, planning and internship preparation.</p>
+    <div class="quick-grid">
+      <button class="quick" data-prompt="Teach me Python from beginner level with a small example.">
+        <b>💻 Learn coding</b><small>Simple lessons and examples</small>
+      </button>
+      <button class="quick" data-prompt="Start a 10-question computer science quiz. Ask one question at a time.">
+        <b>🧠 Practice quiz</b><small>Learn through challenges</small>
+      </button>
+      <button class="quick" data-prompt="Make a realistic weekly study and internship preparation plan for me.">
+        <b>🚀 Career mission</b><small>Prepare step by step</small>
+      </button>
+    </div>
   </div>
 
-  <section class="panel" id="assistant">
-    <div class="eyebrow">EDUFAMILY WORKSPACE</div>
-    <h2 id="toolTitle">✦ What shall we work on today?</h2>
-    <p id="toolDescription">Choose a feature above to get started.</p>
-    <div id="fields"></div>
-    <button onclick="runTool()">Generate result</button>
-    <p id="result"></p>
-  </section>
+  <div class="messages" id="messages"></div>
+  <div class="muted" id="typing" hidden>Hira is thinking…</div>
 
-  <section class="panel">
-    <h2>✧ Your personal notes</h2>
-    <textarea id="notes" rows="3" placeholder="Write your ideas, plans or reminders..."></textarea>
-    <button onclick="saveNotes()">Save notes</button>
-    <p id="noteStatus"></p>
-  </section>
-</main>
-
-<footer>EduFamily AI · Learn smarter. Plan better. Grow together.</footer>
-
-<button id="hira-toggle" onclick="toggleHira()">✨ Chat with Hira</button>
-
-<div id="hira-window">
-  <div class="chat-head">
-    <div><strong>✨ Hira AI</strong><br><small>Your study and career dost</small></div>
-    <button onclick="toggleHira()">✕</button>
+  <div class="composer">
+    <textarea id="messageInput" rows="2"
+      placeholder="Message Hira… Enter to send, Shift+Enter for a new line"></textarea>
+    <div class="composer-bottom">
+      <div class="tools">
+        <button data-prompt="Explain this topic in simple words with an example: ">Explain</button>
+        <button data-prompt="Debug this code and give the complete corrected version:\n">Debug code</button>
+        <button data-prompt="Make a short study plan for today.">Study plan</button>
+      </div>
+      <button class="send" id="sendBtn" title="Send message">➤</button>
+    </div>
   </div>
-  <div id="hira-messages" aria-live="polite">
-    <div class="msg bot">Heyyy dost! 💜 Main Hira hoon. Ask me about Python, studies, AI or internships!</div>
+  <div class="note">AI can make mistakes. Never share passwords or private information.</div>
+</section>
+
+<section class="panel" id="studyView">
+  <h2>📚 Study planner</h2>
+  <p class="muted">Your tasks are saved in this browser.</p>
+  <div class="field">
+    <label>New task</label>
+    <input id="taskInput" placeholder="Example: Practise 5 Python programs">
   </div>
-  <form class="chat-form" id="hira-form">
-    <input id="hira-input" placeholder="Message Hira..." autocomplete="off" maxlength="4000" required>
-    <button id="hira-send" type="submit">Send</button>
-  </form>
+  <button class="btn" id="addTask">＋ Add task</button>
+  <div id="tasks"></div>
+  <p class="muted" id="taskProgress"></p>
+  <button class="btn secondary" id="askPlan">Ask Hira to plan my tasks</button>
+</section>
+
+<section class="panel" id="quizView">
+  <h2>🧠 Quiz mode</h2>
+  <div class="field">
+    <label>Topic</label>
+    <input id="quizTopic" placeholder="Python, AWS, DBMS, aptitude…">
+  </div>
+  <div class="field">
+    <label>Difficulty</label>
+    <select id="quizLevel">
+      <option>Beginner</option>
+      <option>Intermediate</option>
+      <option>Exam level</option>
+    </select>
+  </div>
+  <button class="btn" id="startQuiz">Start quiz</button>
+</section>
+
+<section class="panel" id="careerView">
+  <h2>🚀 Career mode</h2>
+  <div class="quick-grid">
+    <button class="quick" data-prompt="Create a free beginner-friendly roadmap to become internship-ready in software development and AI.">
+      <b>🧭 Internship roadmap</b><small>Weekly learning plan</small>
+    </button>
+    <button class="quick" data-prompt="Help me build a student resume. Ask for missing details one at a time.">
+      <b>📄 Resume builder</b><small>Make a student resume</small>
+    </button>
+    <button class="quick" data-prompt="Conduct a mock technical interview for a second-year CSE student. Ask one question at a time.">
+      <b>🎤 Mock interview</b><small>Practise and get feedback</small>
+    </button>
+  </div>
+</section>
+
+<section class="panel" id="settingsView">
+  <h2>⚙ Settings</h2>
+  <div class="field">
+    <label>Backend URL</label>
+    <input id="backendUrl" value="https://hira-ai-1iiz.onrender.com">
+  </div>
+  <p class="muted">Keep your Gemini API key on the backend only.</p>
+  <button class="btn" id="saveSettings">Save settings</button>
+  <button class="btn secondary" id="testBackend">Test connection</button>
+</section>
 </div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-let current = 'study';
+(() => {
+  const $ = id => document.getElementById(id);
+  const DEFAULT_BACKEND = "https://hira-ai-1iiz.onrender.com";
 
-const configs = {
-  study: {
-    title: '✧ AI Study Planner',
-    desc: 'Enter your subject and available study time.',
-    fields: [['Subject','subject','e.g. Python'],['Available minutes','minutes','60']]
-  },
-  career: {
-    title: '⌘ Career Navigator',
-    desc: 'Explore a path that matches your interests.',
-    fields: [['Your interests','interests','e.g. coding, AI'],['Your current level','level','e.g. beginner']]
-  },
-  budget: {
-    title: '◈ Family Budget Planner',
-    desc: 'Enter monthly income and expenses.',
-    fields: [['Monthly income (₹)','income','25000'],['Monthly expenses (₹)','expenses','18000']]
-  },
-  goals: {
-    title: '♡ Family Goals',
-    desc: 'Turn one goal into small, actionable steps.',
-    fields: [['Your goal','goal','e.g. save for education'],['Target date','date','e.g. December']]
-  }
-};
+  const KEY = {
+    session: "hira_current_session_v3",
+    chats: "hira_chats_v3",
+    theme: "hira_theme_v3",
+    tasks: "hira_tasks_v3",
+    backend: "hira_backend_v3"
+  };
 
-function showTool(type) {
-  current = type;
-  const c = configs[type];
-  document.getElementById('toolTitle').textContent = c.title;
-  document.getElementById('toolDescription').textContent = c.desc;
-  const fields = document.getElementById('fields');
-  fields.replaceChildren();
-
-  c.fields.forEach(f => {
-    const label = document.createElement('label');
-    label.textContent = f[0];
-    const input = document.createElement('input');
-    input.id = f[1];
-    input.placeholder = f[2];
-    label.appendChild(input);
-    fields.appendChild(label);
-  });
-
-  document.getElementById('result').textContent = '';
-  document.getElementById('assistant').scrollIntoView({behavior:'smooth'});
-}
-
-function runTool() {
-  const val = id => document.getElementById(id)?.value.trim() || '';
-  let answer = '';
-
-  if (current === 'study') {
-    const subject = val('subject');
-    const raw = val('minutes');
-    const minutes = Number(raw);
-    if (!subject || !raw || !Number.isFinite(minutes) || minutes < 1) {
-      answer = 'Please enter a subject and valid study minutes.';
-    } else {
-      const learn = Math.floor(minutes * 0.6);
-      const practice = Math.floor(minutes * 0.3);
-      answer = `Your ${subject} study plan (${minutes} minutes)\n\n1. Learn concepts — ${learn} minutes\n2. Practice questions — ${practice} minutes\n3. Quick revision — ${minutes-learn-practice} minutes\n\nTip: Take a short break after your session.`;
+  function read(key, fallback) {
+    try {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : JSON.parse(value);
+    } catch {
+      return fallback;
     }
   }
 
-  if (current === 'career') {
-    const interests = val('interests');
-    answer = !interests ? 'Please enter your interests.' :
-      `Career exploration for: ${interests}\nCurrent level: ${val('level') || 'Not specified'}\n\nPossible paths:\n• Software development\n• Data analytics and AI\n• UI/UX design\n\nNext step: Build a beginner project in the area you like.`;
+  function write(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
   }
 
-  if (current === 'budget') {
-    const rawIncome = val('income');
-    const rawExpenses = val('expenses');
-    const income = Number(rawIncome);
-    const expenses = Number(rawExpenses);
-
-    if (!rawIncome || !rawExpenses || !Number.isFinite(income) ||
-        !Number.isFinite(expenses) || income < 0 || expenses < 0) {
-      answer = 'Please enter valid non-negative amounts.';
-    } else {
-      answer = `Monthly budget summary\n\nIncome: ₹${income.toLocaleString('en-IN')}\nExpenses: ₹${expenses.toLocaleString('en-IN')}\n${income >= expenses ? 'Remaining savings' : 'Amount over budget'}: ₹${Math.abs(income-expenses).toLocaleString('en-IN')}`;
-    }
+  function makeId() {
+    return window.crypto && crypto.randomUUID
+      ? crypto.randomUUID()
+      : "hira-" + Date.now() + "-" + Math.random().toString(36).slice(2);
   }
 
-  if (current === 'goals') {
-    const goal = val('goal');
-    answer = !goal ? 'Please write your goal.' :
-      `Your goal: ${goal}\nTarget date: ${val('date') || 'Not set'}\n\nYour action plan:\n1. Break the goal into three small tasks.\n2. Complete the first task this week.\n3. Review progress every Sunday.\n4. Adjust your plan when needed.`;
+  let sessionId = localStorage.getItem(KEY.session) || makeId();
+  localStorage.setItem(KEY.session, sessionId);
+
+  let chats = read(KEY.chats, {});
+  let messages = [];
+  let busy = false;
+
+  function backend() {
+    return (localStorage.getItem(KEY.backend) || DEFAULT_BACKEND).replace(/\/+$/, "");
   }
 
-  document.getElementById('result').textContent = answer;
-}
-
-function saveNotes() {
-  try {
-    localStorage.setItem('eduFamilyNotes', document.getElementById('notes').value);
-    document.getElementById('noteStatus').textContent = 'Notes saved in this browser ✓';
-  } catch (e) {
-    document.getElementById('noteStatus').textContent = 'Could not save notes.';
+  function toast(message) {
+    $("toast").textContent = message;
+    $("toast").classList.add("show");
+    setTimeout(() => $("toast").classList.remove("show"), 2500);
   }
-}
 
-try {
-  document.getElementById('notes').value = localStorage.getItem('eduFamilyNotes') || '';
-} catch (e) {}
+  function escapeHTML(text) {
+    return String(text).replace(/[&<>"']/g, c => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;",
+      '"':"&quot;", "'":"&#39;"
+    }[c]));
+  }
 
-function toggleHira() {
-  const chat = document.getElementById('hira-window');
-  const open = chat.style.display === 'block';
-  chat.style.display = open ? 'none' : 'block';
-  if (!open) document.getElementById('hira-input').focus();
-}
+  // Safe basic formatting: paragraphs, inline code and fenced code.
+  function formatText(text) {
+    return String(text).split("```").map((part, index) => {
+      const safe = escapeHTML(part);
+      if (index % 2 === 1) {
+        return "<pre><code>" + safe.replace(/^\w+\n/, "") + "</code></pre>";
+      }
+      return safe.replace(/`([^`]+)`/g, "<code>$1</code>")
+        .split(/\n\n+/)
+        .map(p => "<p>" + p.replace(/\n/g, "<br>") + "</p>")
+        .join("");
+    }).join("");
+  }
 
-function addMessage(text, role) {
-  const messages = document.getElementById('hira-messages');
-  const bubble = document.createElement('div');
-  bubble.className = 'msg ' + role;
-  bubble.textContent = text;
-  messages.appendChild(bubble);
-  messages.scrollTop = messages.scrollHeight;
-  return bubble;
-}
+  function saveCurrent() {
+    chats[sessionId] = {
+      id: sessionId,
+      messages: messages,
+      updated: Date.now(),
+      title: (messages.find(m => m.role === "user")?.text || "New chat").slice(0, 45)
+    };
+    write(KEY.chats, chats);
+    renderHistory();
+  }
 
-/* Keep the same session ID for this browser so follow-up messages connect. */
-const SESSION_KEY = 'hira_ai_session_id';
-let sessionId = localStorage.getItem(SESSION_KEY);
+  function renderMessages() {
+    $("messages").innerHTML = messages.map((m, i) => `
+      <article class="message ${m.role === "user" ? "user" : "assistant"}">
+        <div class="avatar">${m.role === "user" ? "S" : "H"}</div>
+        <div class="bubble">
+          ${formatText(m.text)}
+          <button class="copy" data-copy="${i}">Copy message</button>
+        </div>
+      </article>
+    `).join("");
 
-if (!sessionId) {
-  sessionId = (crypto.randomUUID
-    ? crypto.randomUUID()
-    : 'hira-' + Date.now() + '-' + Math.random().toString(36).slice(2));
-  localStorage.setItem(SESSION_KEY, sessionId);
-}
-
-document.getElementById('hira-form').addEventListener('submit', async function(event) {
-  event.preventDefault();
-
-  const input = document.getElementById('hira-input');
-  const send = document.getElementById('hira-send');
-  const question = input.value.trim();
-
-  if (!question || send.disabled) return;
-
-  addMessage(question, 'user');
-  input.value = '';
-  send.disabled = true;
-  send.textContent = '...';
-
-  const thinking = addMessage('Hira is thinking... 💜', 'bot');
-
-  try {
-    const response = await fetch('https://hira-ai-1iiz.onrender.com/chat', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        message: question,
-        session_id: sessionId
-      })
+    $("messages").querySelectorAll("[data-copy]").forEach(button => {
+      button.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(messages[Number(button.dataset.copy)].text);
+          toast("Message copied!");
+        } catch {
+          toast("Copy not supported by this browser.");
+        }
+      };
     });
 
-    const data = await response.json();
-    thinking.remove();
-
-    if (!response.ok) {
-      addMessage(data.error || 'Hira could not reply. Please try again.', 'bot');
-    } else {
-      addMessage(data.reply || 'Please try asking again.', 'bot');
-    }
-  } catch (error) {
-    thinking.remove();
-    addMessage('Yaar, connection problem hai. Please try again in a moment.', 'bot');
-  } finally {
-    send.disabled = false;
-    send.textContent = 'Send';
-    input.focus();
+    $("welcome").style.display = messages.length ? "none" : "block";
   }
-});
 
-showTool('study');
+  function renderHistory() {
+    const recent = Object.values(chats)
+      .sort((a, b) => b.updated - a.updated)
+      .slice(0, 30);
+
+    $("historyList").innerHTML = recent.map(chat => `
+      <button data-session="${escapeHTML(chat.id)}">
+        💬 ${escapeHTML(chat.title || "New chat")}
+      </button>
+    `).join("");
+
+    $("historyList").querySelectorAll("[data-session]").forEach(button => {
+      button.onclick = () => loadChat(button.dataset.session);
+    });
+  }
+
+  async function loadServerHistory() {
+    try {
+      const response = await fetch(
+        backend() + "/history/" + encodeURIComponent(sessionId)
+      );
+      if (!response.ok) throw new Error("History unavailable");
+
+      const data = await response.json();
+
+      if (Array.isArray(data.messages) && data.messages.length) {
+        messages = data.messages.map(m => ({
+          role: m.role === "user" ? "user" : "assistant",
+          text: m.text
+        }));
+        saveCurrent();
+        renderMessages();
+      } else if (chats[sessionId]) {
+        messages = chats[sessionId].messages || [];
+        renderMessages();
+      }
+    } catch {
+      if (chats[sessionId]) {
+        messages = chats[sessionId].messages || [];
+        renderMessages();
+      }
+    }
+  }
+
+  function newChat() {
+    sessionId = makeId();
+    localStorage.setItem(KEY.session, sessionId);
+    messages = [];
+    renderMessages();
+    saveCurrent();
+    setView("chat");
+    $("messageInput").focus();
+  }
+
+  function loadChat(id) {
+    sessionId = id;
+    localStorage.setItem(KEY.session, sessionId);
+    messages = chats[id]?.messages || [];
+    renderMessages();
+    renderHistory();
+    setView("chat");
+    loadServerHistory();
+  }
+
+  function addMessage(role, text) {
+    messages.push({ role, text });
+    renderMessages();
+    saveCurrent();
+  }
+
+  async function sendMessage(text) {
+    text = (text ?? $("messageInput").value).trim();
+    if (!text || busy) return;
+
+    $("messageInput").value = "";
+    addMessage("user", text);
+
+    busy = true;
+    $("sendBtn").disabled = true;
+    $("typing").hidden = false;
+    $("status").textContent = "Hira is thinking…";
+
+    try {
+      const response = await fetch(backend() + "/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          session_id: sessionId
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Request failed: " + response.status);
+      }
+
+      addMessage("assistant", data.reply || "Sorry yaar, no reply came this time.");
+      $("status").textContent = "Connected ✨";
+    } catch (error) {
+      addMessage(
+        "assistant",
+        "Sorry yaar, I couldn't connect to the backend.\n\n" +
+        error.message +
+        "\n\nOpen Settings and check the backend URL. Also check that Render is running."
+      );
+      $("status").textContent = "Connection issue";
+    } finally {
+      busy = false;
+      $("sendBtn").disabled = false;
+      $("typing").hidden = true;
+      $("messageInput").focus();
+    }
+  }
+
+  function setView(view) {
+    ["chat", "study", "quiz", "career", "settings"].forEach(name => {
+      const element = $(name + "View");
+      if (name !== "chat") element.classList.toggle("show", name === view);
+    });
+
+    $("chatView").style.display = view === "chat" ? "block" : "none";
+
+    document.querySelectorAll("[data-view]").forEach(button => {
+      button.classList.toggle("active", button.dataset.view === view);
+    });
+
+    $("pageTitle").textContent = ({
+      chat: "Hira AI Chat",
+      study: "Study planner",
+      quiz: "Quiz mode",
+      career: "Career mode",
+      settings: "Settings"
+    })[view] || "Hira AI";
+  }
+
+  document.querySelectorAll("[data-view]").forEach(button => {
+    button.onclick = () => setView(button.dataset.view);
+  });
+
+  document.querySelectorAll("[data-prompt]").forEach(button => {
+    button.onclick = () => {
+      setView("chat");
+      sendMessage(button.dataset.prompt);
+    };
+  });
+
+  $("newChat").onclick = newChat;
+  $("sendBtn").onclick = () => sendMessage();
+
+  $("messageInput").addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  $("themeBtn").onclick = () => {
+    const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(KEY.theme, theme);
+  };
+
+  $("settingsBtn").onclick = () => setView("settings");
+
+  $("saveSettings").onclick = () => {
+    const url = $("backendUrl").value.trim().replace(/\/+$/, "");
+    if (!/^https?:\/\//i.test(url)) {
+      toast("Enter a valid backend URL.");
+      return;
+    }
+    localStorage.setItem(KEY.backend, url);
+    toast("Settings saved!");
+  };
+
+  $("testBackend").onclick = async () => {
+    try {
+      const response = await fetch(backend() + "/health");
+      const data = await response.json();
+      toast(response.ok
+        ? "Backend OK · API key " + (data.api_key_configured ? "configured" : "missing")
+        : "Backend returned an error.");
+    } catch {
+      toast("Cannot reach backend. Check URL or Render status.");
+    }
+  };
+
+  $("exportChat").onclick = () => {
+    const text = messages.map(m =>
+      (m.role === "user" ? "You" : "Hira") + ":\n" + m.text
+    ).join("\n\n");
+
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "hira-chat.txt";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  $("clearChat").onclick = async () => {
+    if (!confirm("Clear this chat from this browser and backend?")) return;
+
+    try {
+      await fetch(
+        backend() + "/history/" + encodeURIComponent(sessionId),
+        { method: "DELETE" }
+      );
+    } catch {}
+
+    messages = [];
+    delete chats[sessionId];
+    write(KEY.chats, chats);
+    renderMessages();
+    renderHistory();
+    toast("Current chat cleared.");
+  };
+
+  // Study planner
+  function getTasks() {
+    return read(KEY.tasks, []);
+  }
+
+  function renderTasks() {
+    const tasks = getTasks();
+
+    $("tasks").innerHTML = tasks.map((task, index) => `
+      <div class="task ${task.done ? "done" : ""}">
+        <input type="checkbox" data-task="${index}" ${task.done ? "checked" : ""}>
+        <span>${escapeHTML(task.text)}</span>
+        <button class="delete-task" data-delete-task="${index}">Delete</button>
+      </div>
+    `).join("");
+
+    $("taskProgress").textContent =
+      tasks.filter(t => t.done).length + " of " + tasks.length + " tasks completed";
+
+    $("tasks").querySelectorAll("[data-task]").forEach(input => {
+      input.onchange = () => {
+        const current = getTasks();
+        current[Number(input.dataset.task)].done = input.checked;
+        write(KEY.tasks, current);
+        renderTasks();
+      };
+    });
+
+    $("tasks").querySelectorAll("[data-delete-task]").forEach(button => {
+      button.onclick = () => {
+        const current = getTasks();
+        current.splice(Number(button.dataset.deleteTask), 1);
+        write(KEY.tasks, current);
+        renderTasks();
+      };
+    });
+  }
+
+  $("addTask").onclick = () => {
+    const text = $("taskInput").value.trim();
+    if (!text) return;
+
+    const tasks = getTasks();
+    tasks.push({ text, done: false });
+    write(KEY.tasks, tasks);
+    $("taskInput").value = "";
+    renderTasks();
+  };
+
+  $("taskInput").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      $("addTask").click();
+    }
+  });
+
+  $("askPlan").onclick = () => {
+    const tasks = getTasks();
+    setView("chat");
+    sendMessage(
+      "Help me plan these study tasks realistically for today:\n" +
+      tasks.map(t => "- [" + (t.done ? "x" : " ") + "] " + t.text).join("\n")
+    );
+  };
+
+  $("startQuiz").onclick = () => {
+    const topic = $("quizTopic").value.trim() || "computer science";
+    const level = $("quizLevel").value;
+    setView("chat");
+    sendMessage(
+      "Start a " + level + " quiz on " + topic +
+      ". Ask one question at a time. Wait for my answer, explain it, and track my score."
+    );
+  };
+
+  // Restore saved theme, chats and current server history.
+  document.documentElement.dataset.theme =
+    localStorage.getItem(KEY.theme) || "light";
+
+  $("backendUrl").value = backend();
+
+  if (chats[sessionId]) {
+    messages = chats[sessionId].messages || [];
+  }
+
+  renderMessages();
+  renderHistory();
+  renderTasks();
+  loadServerHistory();
+})();
 </script>
 </body>
 </html>
