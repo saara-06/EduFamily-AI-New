@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EduFamily AI | Your Future Companion</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#080a18;color:#f4f2ff;font-family:Arial,sans-serif}
@@ -25,6 +26,7 @@ p{color:#aaaecb;line-height:1.7}
 h2{font-size:18px;margin:17px 0 8px}
 button{background:linear-gradient(90deg,#895bfa,#5369ef);border:0;border-radius:10px;color:white;padding:12px 16px;cursor:pointer;font-weight:bold}
 button:hover{filter:brightness(1.15)}
+button:disabled{opacity:.65;cursor:wait}
 input,textarea,select{width:100%;padding:12px;margin:8px 0;background:#090b1b;color:white;border:1px solid #343252;border-radius:9px}
 .panel{margin-top:28px;padding:23px;border:1px solid #343052;background:#111329;border-radius:18px}
 #result{white-space:pre-wrap;color:#d8d2ff;line-height:1.8}
@@ -40,11 +42,16 @@ footer{text-align:center;color:#777b9a;padding:35px}
 .chat-form{display:flex;gap:6px;padding:8px;border-top:1px solid #343252}
 .chat-form input{flex:1;min-width:0;margin:0}
 .chat-form button{padding:10px}
-@media(max-width:480px){main{padding:22px 15px}.hero{padding:20px 0}.panel{padding:16px}header{padding:18px 15px}}
+@media(max-width:480px){
+main{padding:22px 15px}
+.hero{padding:20px 0}
+.panel{padding:16px}
+header{padding:18px 15px}
+}
 </style>
 </head>
-<body>
 
+<body>
 <header>
   <div class="logo">EduFamily<span> AI</span></div>
   <div class="pill">✦ YOUR AI COMPANION</div>
@@ -107,7 +114,6 @@ footer{text-align:center;color:#777b9a;padding:35px}
 
 <footer>EduFamily AI · Learn smarter. Plan better. Grow together.</footer>
 
-<!-- HIRA CHAT ASSISTANT -->
 <button id="hira-toggle" onclick="toggleHira()">✨ Chat with Hira</button>
 
 <div id="hira-window">
@@ -178,7 +184,7 @@ function runTool() {
     const s = val('subject');
     const m = Number(val('minutes'));
 
-    if (!s || !m || m < 1 || !Number.isFinite(m)) {
+    if (!s || !val('minutes') || !Number.isFinite(m) || m < 1) {
       answer = 'Please enter a subject and valid study minutes.';
     } else {
       const a = Math.floor(m * 0.6);
@@ -255,41 +261,7 @@ function addMessage(text, who) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function getHiraReply(question) {
-  const q = question.toLowerCase();
-
-  if (/\b(hi|hello|hey|salaam|assalamualaikum)\b/.test(q)) {
-    return 'Heyyy! 💜 Hira is here! What shall we learn today?';
-  }
-
-  if (q.includes('python') || q.includes('coding') || q.includes('program')) {
-    return '💻 Coding mission: Start with one small problem, understand the logic, then write the code. Tell me your exact topic and I will help you step by step.';
-  }
-
-  if (q.includes('study') || q.includes('exam') || q.includes('timetable')) {
-    return '📚 Let’s make studying easier! Pick one topic, study for 25 minutes, practise questions for 10 minutes, and revise for 5 minutes. Which subject is your priority?';
-  }
-
-  if (q.includes('career') || q.includes('job') || q.includes('internship')) {
-    return '🚀 Start with programming basics, DSA practice, one useful project, and a GitHub portfolio. Choose a career area you enjoy and build your skills consistently.';
-  }
-
-  if (q.includes('motivation') || q.includes('tired') || q.includes('lazy')) {
-    return '💜 You do not have to do everything today. Choose one tiny task and work on it for just 10 minutes. Small progress still counts!';
-  }
-
-  if (q.includes('budget') || q.includes('saving') || q.includes('money')) {
-    return '💰 Track your monthly income, essential expenses, and savings. You can also open the Family Budget card to calculate the difference.';
-  }
-
-  if (q.includes('goal') || q.includes('plan')) {
-    return '✨ Turn your goal into three small tasks. Pick the easiest one, set a deadline, and review your progress at the end of the week.';
-  }
-
-  return '💜 I can help with study planning, Python basics, careers, internships, goals and budgeting. Tell me a little more about what you need!';
-}
-
-function sendHira(event) {
+async function sendHira(event) {
   event.preventDefault();
 
   const input = document.getElementById('hira-input');
@@ -300,8 +272,48 @@ function sendHira(event) {
   addMessage(question, 'user');
   input.value = '';
 
-  const reply = getHiraReply(question);
-  addMessage(reply, 'bot');
+  const messages = document.getElementById('hira-messages');
+  const thinking = document.createElement('div');
+  thinking.className = 'msg bot';
+  thinking.textContent = 'Hira is thinking... 💜';
+  messages.appendChild(thinking);
+  messages.scrollTop = messages.scrollHeight;
+
+  const sendButton = document.querySelector('.chat-form button');
+  sendButton.disabled = true;
+  sendButton.textContent = '...';
+
+  try {
+    const response = await fetch('https://hira-ai-1iiz.onrender.com/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: question })
+    });
+
+    const data = await response.json();
+    thinking.remove();
+
+    if (!response.ok) {
+      addMessage(
+        data.error || 'Sorry yaar, Hira could not reply. Please try again.',
+        'bot'
+      );
+    } else {
+      addMessage(data.reply || 'Please try asking again.', 'bot');
+    }
+  } catch (error) {
+    thinking.remove();
+    addMessage(
+      'Connection problem, yaar! Please try again. If this continues, the backend may be waking up.',
+      'bot'
+    );
+  } finally {
+    sendButton.disabled = false;
+    sendButton.textContent = 'Send';
+    input.focus();
+  }
 }
 
 showTool('study');
